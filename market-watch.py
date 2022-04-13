@@ -99,6 +99,10 @@ def calculateDifferences():
         """)
 
 def itemIdToName(id: int) -> str:
+    cursor = con.execute("SELECT name FROM Prices WHERE id = ?", (id,))
+    name = cursor.fetchone()
+    if (name):
+        return name
     response = requests.get('https://xivapi.com/item/' + str(id) + '?columns=Name')
     if(response.ok):    
         name = response.json()['Name']
@@ -133,7 +137,7 @@ def updatePrices():
 def getTopFlips(n: int):
     with con:
         cursor = con.execute("SELECT * FROM PriceDiff ORDER BY profit DESC")
-        items = cursor.fetchmany(n)
+        items = cursor.fetchall()
         for item in items:
             print(itemIdToName(item[0]))
 
