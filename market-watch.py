@@ -141,7 +141,6 @@ def getTopFlips(n: int):
         for item in items:
             print(itemIdToName(item[0]))
 
-getTopFlips(5)
 
 # counterNQ = Counter()
 # counterHQ = Counter()
