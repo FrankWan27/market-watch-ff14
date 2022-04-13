@@ -93,7 +93,7 @@ def calculateDifferences():
         con.execute("DROP VIEW IF EXISTS PriceDiff;")
         con.execute("""
             CREATE VIEW PriceDiff AS
-            SELECT id, high_quality, cheapest_world, (world_price-dc_price) as profit, trade_velocity
+            SELECT id, name, high_quality, cheapest_world, (world_price-dc_price) as profit, trade_velocity
             FROM Prices
             WHERE trade_velocity >= 1;
         """)
@@ -101,7 +101,23 @@ def calculateDifferences():
 def itemIdToName(id: int) -> str:
     response = requests.get('https://xivapi.com/item/' + str(id) + '?columns=Name')
     if(response.ok):    
-        return response.json()['Name']
+        name = response.json()['Name']
+        with con:
+            con.execute("""
+                INSERT INTO Prices (id, high_quality, name) 
+                    VALUES (?, ?, ?)
+                    ON CONFLICT(id, high_quality) 
+                    DO UPDATE SET 
+                        name=excluded.name;
+            """, (id, 0, name))
+            con.execute("""
+                INSERT INTO Prices (id, high_quality, name) 
+                    VALUES (?, ?, ?)
+                    ON CONFLICT(id, high_quality) 
+                    DO UPDATE SET 
+                        name=excluded.name;
+            """, (id, 1, name))
+        return name
     return 'XIVAPI Name Lookup Failed'
 
 
@@ -114,8 +130,14 @@ def updatePrices():
     print('DC Prices Updated\n')
     calculateDifferences()
     
-    
-calculateDifferences()
+def getTopFlips(n: int):
+    with con:
+        cursor = con.execute("SELECT * FROM PriceDiff ORDER BY profit DESC")
+        items = cursor.fetchmany(n)
+        for item in items:
+            print(itemIdToName(item[0]))
+
+getTopFlips(5)
 
 # counterNQ = Counter()
 # counterHQ = Counter()
