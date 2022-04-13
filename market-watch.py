@@ -95,7 +95,7 @@ def calculateDifferences():
             CREATE VIEW PriceDiff AS
             SELECT id, high_quality, cheapest_world, (world_price-dc_price) as profit, trade_velocity
             FROM Prices
-            WHERE trade_velocity != 0;
+            WHERE trade_velocity >= 1;
         """)
 
 def itemIdToName(id: int) -> str:
@@ -113,6 +113,9 @@ def updatePrices():
     dcPrices = getDCPrices(ids)
     print('DC Prices Updated\n')
     calculateDifferences()
+    
+    
+calculateDifferences()
 
 # counterNQ = Counter()
 # counterHQ = Counter()
