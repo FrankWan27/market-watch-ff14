@@ -3,7 +3,7 @@ import asyncio
 from collections import Counter
 import sqlite3 as sl
 
-#TODO: 99x quanitity, trade volume, cheapest world
+#TODO: 99x quanitity
 WORLD = 'Cactuar'
 DATACENTER = 'Aether'
 BATCHSIZE = 100
@@ -140,19 +140,3 @@ def getTopFlips(n: int):
         items = cursor.fetchall()
         for item in items:
             print(itemIdToName(item[0]))
-
-
-# counterNQ = Counter()
-# counterHQ = Counter()
-# for itemID in dcPrices: 
-#     counterNQ[itemID] = worldPrices[itemID][0] - dcPrices[itemID][0]
-#     counterHQ[itemID] = worldPrices[itemID][1] - dcPrices[itemID][1]
-
-# print('NQ:')
-# for k, v in counterNQ.most_common(10):
-#     print(itemIdToName(k) + ' - profit: ' + str(v))
-
-    
-# print('\n\nHQ:')
-# for k, v in counterHQ.most_common(10):
-#     print(itemIdToName(k) + ' - profit: ' + str(v))
