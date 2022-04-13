@@ -100,7 +100,7 @@ def calculateDifferences():
 
 def itemIdToName(id: int) -> str:
     cursor = con.execute("SELECT name FROM Prices WHERE id = ?", (id,))
-    name = cursor.fetchone()
+    name = cursor.fetchone()[0]
     if (name):
         return name
     response = requests.get('https://xivapi.com/item/' + str(id) + '?columns=Name')
