@@ -3,7 +3,7 @@ import asyncio
 from collections import Counter
 import sqlite3 as sl
 
-#TODO: 99x quanitity
+#TODO: 99x quanitity,
 WORLD = 'Cactuar'
 DATACENTER = 'Aether'
 BATCHSIZE = 100
@@ -88,12 +88,12 @@ def getDCPrices(ids: list[int]):
         index += BATCHSIZE
 
 
-def calculateDifferences():
+def createView():
     with con:
         con.execute("DROP VIEW IF EXISTS PriceDiff;")
         con.execute("""
             CREATE VIEW PriceDiff AS
-            SELECT id, name, high_quality, cheapest_world, (world_price-dc_price) as profit, trade_velocity
+            SELECT id, name, high_quality, world_price, dc_price, cheapest_world, (world_price-dc_price) as profit, 1.0*(world_price-dc_price)/(1.0*dc_price) as percent, trade_velocity
             FROM Prices
             WHERE trade_velocity >= 1;
         """)
@@ -132,7 +132,7 @@ def updatePrices():
     print('World Prices Updated\n')
     dcPrices = getDCPrices(ids)
     print('DC Prices Updated\n')
-    calculateDifferences()
+    createView()
     
 def getTopFlips(n: int):
     with con:
